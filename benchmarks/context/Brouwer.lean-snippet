@@ -1,0 +1,81 @@
+-- Declaration-only prompt excerpt for BrouwerBench.
+-- This prompt context is not a standalone Lean module.
+
+variable {n : PNat} {l : PNat}
+
+-- Integer grid points of the standard simplex at denominator l.
+abbrev TT (n : PNat) (l : PNat) :=
+  {x : PiFinset fun (_ : Fin n) => Fin (l + 1) |
+    sum i, (x i : Nat) = l}
+
+constant TTtostdSimplex :
+  TT n l -> stdSimplex Real (Fin n)
+
+instance TT.CoestdSimplex : CoeOut (TT n l) (stdSimplex Real (Fin n)) where
+  coe := TTtostdSimplex
+
+-- Coordinate-indexed lexicographic order for the Scarf instance.
+abbrev TT.Ilt (i : Fin n) (x y : TT n l) : Prop :=
+  toLex (x i, x) < toLex (y i, y)
+
+instance TT.ILO : IndexedLOrder (Fin n) (TT n l) where
+  IST := fun i => linearOrderOfSTO (TT.Ilt i)
+
+variable (x y : TT n l) (i : Fin n)
+
+axiom size_bound_key :
+  dist (TTtostdSimplex x) (TTtostdSimplex y) <= 1 / (l : Real)
+
+axiom size_bound_in :
+  x.1 i <= y.1 i -> (TTtostdSimplex x).1 i <= (TTtostdSimplex y).1 i
+
+axiom size_bound_out :
+  dist (TTtostdSimplex x) (TTtostdSimplex y) <= 2 / (l : Real)
+
+-- Grid coloring induced from a continuous self-map of the simplex.
+constant Fcolor :
+  (stdSimplex Real (Fin n) -> stdSimplex Real (Fin n)) -> TT n l -> Fin n
+
+-- At grid level l' + 1, Scarf supplies a colorful room for Fcolor.
+constant room_seq :
+  (stdSimplex Real (Fin n) -> stdSimplex Real (Fin n)) ->
+    Nat -> Prod (Finset (TT n l)) (Finset (Fin n))
+
+constant room_point_seq :
+  (stdSimplex Real (Fin n) -> stdSimplex Real (Fin n)) ->
+    Nat -> TT n l
+
+-- Limit and subsequence package declarations.
+constant exists_subseq_constant_of_finite_image :
+  (Nat -> Fin n) -> Nonempty {g : Nat -> Nat // StrictMono g}
+
+constant constant_index_set_nonempty :
+  (stdSimplex Real (Fin n) -> stdSimplex Real (Fin n)) -> Nonempty PUnit
+
+constant gpkg :
+  (stdSimplex Real (Fin n) -> stdSimplex Real (Fin n)) -> PUnit
+
+constant g1 :
+  (stdSimplex Real (Fin n) -> stdSimplex Real (Fin n)) -> Nat -> Nat
+
+constant hpkg_aux :
+  (stdSimplex Real (Fin n) -> stdSimplex Real (Fin n)) -> Nonempty PUnit
+
+constant hpkg :
+  (stdSimplex Real (Fin n) -> stdSimplex Real (Fin n)) -> PUnit
+
+variable (f : stdSimplex Real (Fin n) -> stdSimplex Real (Fin n))
+variable (z : stdSimplex Real (Fin n))
+
+axiom dominant_coords_tend_to_zero :
+  Tendsto (fun k => dist (room_point_seq f k) (TTtostdSimplex (room_point_seq f k)))
+    atTop (nhds 0)
+
+axiom tendsto_diam_to_zero :
+  Tendsto (fun k => dist (room_point_seq f k) z) atTop (nhds 0)
+
+axiom f_coords_ge_z_coords :
+  forall i, z.1 i <= (f z).1 i
+
+axiom Brouwer :
+  Continuous f -> exists x : stdSimplex Real (Fin n), f x = x

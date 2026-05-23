@@ -1,0 +1,47 @@
+\begin{table}[t]
+\centering
+\caption{BrouwerBench v1 results. Scores use a 0--2 rubric per item.}
+\label{tab:brouwerbench-v1-models}
+\begin{tabular}{lrrrr}
+\hline
+Model & Score & Accuracy & Runtime (s) & Avg. / task (s) \\
+\hline
+\texttt{gpt-oss:20b} & 122/160 & 76.2\% & 1448.1 & 18.10 \\
+\texttt{qwen3:8b} & 101/160 & 63.1\% & 428.1 & 5.35 \\
+\texttt{gemma3:12b} & 89/160 & 55.6\% & 822.8 & 10.29 \\
+\texttt{kimina-prover:7b} & 58/160 & 36.2\% & 986.4 & 12.33 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{BrouwerBench v1 scores by formalization section.}
+\label{tab:brouwerbench-v1-sections}
+\begin{tabular}{lrrrr}
+\hline
+Model & Scarf & Brouwer & Product Brouwer & Nash \\
+\hline
+\texttt{gpt-oss:20b} & 40/48 & 25/40 & 29/36 & 28/36 \\
+\texttt{qwen3:8b} & 30/48 & 22/40 & 25/36 & 24/36 \\
+\texttt{gemma3:12b} & 25/48 & 21/40 & 24/36 & 19/36 \\
+\texttt{kimina-prover:7b} & 14/48 & 12/40 & 14/36 & 18/36 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{BrouwerBench v1 scores by task type.}
+\label{tab:brouwerbench-v1-task-types}
+\begin{tabular}{lrrrrrrr}
+\hline
+Model & Def. & Dep. & Parity & Summary & Constr. & Analysis & Endpoint \\
+\hline
+\texttt{gpt-oss:20b} & 9/14 & 45/56 & 7/8 & 6/6 & 26/34 & 15/22 & 14/20 \\
+\texttt{qwen3:8b} & 8/14 & 38/56 & 5/8 & 4/6 & 23/34 & 13/22 & 10/20 \\
+\texttt{gemma3:12b} & 5/14 & 34/56 & 5/8 & 4/6 & 20/34 & 11/22 & 10/20 \\
+\texttt{kimina-prover:7b} & 6/14 & 20/56 & 1/8 & 1/6 & 16/34 & 9/22 & 5/20 \\
+\hline
+\end{tabular}
+\end{table}

@@ -1,0 +1,92 @@
+-- Declaration-only prompt excerpt for BrouwerBench.
+-- This prompt context is not a standalone Lean module.
+
+section Brouwer.ProductRetraction
+
+variable {I : Type*} [Fintype I] [DecidableEq I] [LinearOrder I] [Inhabited I]
+variable (card : I -> Nat+)
+
+abbrev BigSimplex : Type :=
+  stdSimplex Real (Fin (total_card card))
+
+abbrev ProductSimplices : Type :=
+  (i : I) -> stdSimplex Real (Fin (card i))
+
+constant prefix_sum :
+  (card : I -> Nat+) -> (i : I) -> Nat
+
+constant index_split_existence :
+  (card : I -> Nat+) -> (k : Fin (total_card card)) ->
+    Nonempty (Sigma fun i => Fin (card i))
+
+constant index_split :
+  (card : I -> Nat+) -> Fin (total_card card) -> Sigma fun i => Fin (card i)
+
+constant index_combine :
+  (card : I -> Nat+) -> (Sigma fun i => Fin (card i)) -> Fin (total_card card)
+
+axiom index_split_combine_inverse :
+  forall p : Sigma fun i => Fin (card i),
+    index_split card (index_combine card p) = p
+
+axiom index_combine_split_inverse :
+  forall k : Fin (total_card card),
+    index_combine card (index_split card k) = k
+
+constant blockWeight :
+  (card : I -> Nat+) -> I -> Real
+
+constant blockSum :
+  (card : I -> Nat+) -> I -> BigSimplex card -> Real
+
+constant uniformProduct :
+  (card : I -> Nat+) -> ProductSimplices card
+
+constant z_uniform :
+  (card : I -> Nat+) -> BigSimplex card
+
+constant deficit :
+  (card : I -> Nat+) -> BigSimplex card -> Real
+
+constant tPush :
+  (card : I -> Nat+) -> BigSimplex card -> Real
+
+constant pushTowardsZ :
+  (card : I -> Nat+) -> BigSimplex card -> BigSimplex card
+
+constant project_to_product :
+  (card : I -> Nat+) -> BigSimplex card -> ProductSimplices card
+
+constant embed_from_product :
+  (card : I -> Nat+) -> ProductSimplices card -> BigSimplex card
+
+axiom blockWeight_pos :
+  forall i : I, 0 < blockWeight card i
+
+axiom tPush_mem_Icc :
+  forall x : BigSimplex card, tPush card x in Set.Icc (0 : Real) 1
+
+axiom blockSum_pushTowardsZ_formula :
+  forall (i : I) (x : BigSimplex card),
+    blockSum card i (pushTowardsZ card x) =
+      (1 - tPush card x) * blockSum card i x + tPush card x * blockWeight card i
+
+axiom blockSum_pushTowardsZ_pos :
+  forall (i : I) (x : BigSimplex card), 0 < blockSum card i (pushTowardsZ card x)
+
+axiom project_embed_id :
+  forall y : ProductSimplices card,
+    project_to_product card (embed_from_product card y) = y
+
+axiom project_continuous :
+  Continuous (project_to_product card)
+
+axiom embed_continuous :
+  Continuous (embed_from_product card)
+
+variable (f : ProductSimplices card -> ProductSimplices card)
+
+axiom Brouwer_Product :
+  Continuous f -> exists x : ProductSimplices card, f x = x
+
+end Brouwer.ProductRetraction
