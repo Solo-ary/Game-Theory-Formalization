@@ -1,143 +1,165 @@
-# Game Theory Formalization
+# Game Theory Formalization in Lean
 
-This repository contains a Lean 4 formalization of core results connecting
-fixed-point theory and finite game theory. The main development proves the
-existence of mixed Nash equilibria for finite games by building the following
-formal pipeline:
+This repository contains the Lean 4 development and benchmark artifacts for the paper
+*Formalizing Scarf, Brouwer, and Nash in Lean*.
 
-```text
-Scarf's lemma -> Brouwer fixed point theorem -> product Brouwer theorem -> Nash equilibrium existence
-```
-
-The repository also includes **BrouwerBench**, a small benchmark dataset for
-evaluating whether language models can explain the proof structure of this
-formalization from Lean context snippets.
-
-## Repository Layout
+The formalization proves a pipeline
 
 ```text
-.
-├── Brouwer/                 # Lean formalization project
-│   ├── Gametheory/
-│   │   ├── Simplex.lean
-│   │   ├── Scarf.lean
-│   │   ├── Brouwer.lean
-│   │   ├── Brouwer_product.lean
-│   │   └── Nash.lean
-│   ├── GameTheory.lean
-│   ├── lakefile.lean
-│   └── lean-toolchain
-└── benchmarks/              # BrouwerBench dataset, scripts, and reports
+Scarf's combinatorial theorem
+  -> Brouwer fixed point theorem on the standard simplex
+  -> Brouwer fixed point theorem on finite products of simplices
+  -> existence of mixed Nash equilibria in finite games
 ```
 
-## Lean Formalization
+The development builds on Mathlib for finite types, finite sets, real analysis,
+compactness, continuity, finite-dimensional spaces, and standard simplices. The
+main contribution of this repository is the formal proof pipeline connecting the
+finite Scarf-style parity argument to the Brouwer and Nash endpoints.
 
-The Lean project lives in [`Brouwer/`](Brouwer). It uses Lean 4 and mathlib.
+## Paper Version
 
-### Main Files
+The Lean version is pinned by [`lean-toolchain`](lean-toolchain), and dependency
+versions are recorded in [`lake-manifest.json`](lake-manifest.json).
 
-- [`Simplex.lean`](Brouwer/Gametheory/Simplex.lean): defines the standard
-  simplex `stdSimplex` over a finite type, including pure strategies and
-  supporting lemmas for finite sums, continuity, and simplex-valued maps.
-- [`Scarf.lean`](Brouwer/Gametheory/Scarf.lean): develops the combinatorial
-  framework used to obtain the Scarf-style lemma underlying the fixed-point
-  argument.
-- [`Brouwer.lean`](Brouwer/Gametheory/Brouwer.lean): proves Brouwer's fixed
-  point theorem on a simplex from the combinatorial development.
-- [`Brouwer_product.lean`](Brouwer/Gametheory/Brouwer_product.lean): lifts the
-  simplex fixed-point theorem to finite products of simplices.
-- [`Nash.lean`](Brouwer/Gametheory/Nash.lean): defines finite games, mixed
-  strategies, payoff functions, and mixed Nash equilibria, then proves the
-  existence theorem using the product Brouwer theorem.
-
-### Key Definitions and Theorems
-
-- `stdSimplex ℝ α`: the standard simplex over a finite type `α`.
-- `Brouwer`: fixed-point theorem for continuous self-maps on a simplex.
-- `Brouwer_Product`: fixed-point theorem for finite products of simplices.
-- `FinGame`: finite game structure with finite players and finite pure strategy
-  sets.
-- `mixedS`: mixed strategy profiles for a finite game.
-- `mixedNashEquilibrium`: predicate for mixed Nash equilibria.
-- `ExistsNashEq`: existence of a mixed Nash equilibrium for finite games.
-
-## Requirements
-
-- Lean 4, as specified by [`Brouwer/lean-toolchain`](Brouwer/lean-toolchain)
-- Lake
-- mathlib, fetched through Lake
-
-The current Lean toolchain is:
+For the camera-ready paper, cite a stable repository state, preferably a Git tag
+or GitHub release such as:
 
 ```text
-leanprover/lean4:v4.22.0
+camera-ready-icml2026
 ```
 
-## Checking the Lean Project
-
-From the repository root:
+To obtain the exact commit hash for a finalized artifact, run:
 
 ```bash
-cd Brouwer
+git rev-parse HEAD
+```
+
+For a shorter display version, run:
+
+```bash
+git rev-parse --short HEAD
+```
+
+Before recording the hash or creating a release, make sure the repository is
+clean:
+
+```bash
+git status --short
+```
+
+If this command prints nothing, the working tree has no uncommitted changes. If
+you edit this README after recording a commit hash, the next commit will have a
+new hash. For this reason, a stable tag or GitHub release is usually better than
+hard-coding a commit hash inside the README itself.
+
+## Reproducing the Lean Build
+
+This is a Lake project. To verify the formalization, run:
+
+```bash
 lake exe cache get
 lake build
 ```
 
-Open files under `Brouwer/Gametheory/` in an editor with Lean support to inspect
-goals and proof states interactively.
+The library root is [`Gametheory.lean`](Gametheory.lean), which imports the main
+development modules. Open the Lean files in an editor with the Lean language
+server running to inspect goals and proof states interactively.
 
-## BrouwerBench
+## Main Formal Statements
 
-[`benchmarks/`](benchmarks) contains **BrouwerBench**, a context-provided
-proof-structure QA benchmark for the formalization pipeline:
+| Statement | File | Role |
+|---|---|---|
+| `Scarf` | `Gametheory/Scarf.lean` | Scarf's combinatorial theorem: existence of a colorful room |
+| `Brouwer` | `Gametheory/Brouwer.lean` | fixed point theorem on the standard simplex |
+| `Brouwer_Product` | `Gametheory/Brouwer_product.lean` | fixed point theorem on finite products of simplices |
+| `ExistsNashEq` | `Gametheory/Nash.lean` | existence of mixed Nash equilibria in finite games |
 
-```text
-Scarf -> Brouwer -> Product Brouwer -> Nash
-```
+## Repository Structure
 
-The main dataset is:
+| Path | Purpose |
+|---|---|
+| `Gametheory/Simplex.lean` | supporting lemmas for standard simplices, including pure strategies and coordinate/evaluation facts |
+| `Gametheory/Scarf.lean` | Ivanov-style indexed-order Scarf theorem: indexed orders, dominant sets, cells, rooms, doors, colorful and nearly colorful configurations, and the parity endpoint `Scarf` |
+| `Gametheory/Brouwer.lean` | derivation of Brouwer's fixed point theorem on the standard simplex from Scarf's theorem using finite grids, dominance estimates, compactness, and continuity |
+| `Gametheory/Brouwer_product.lean` | product-of-simplices fixed point theorem via an explicit embedding-projection construction between a product of simplices and one larger simplex |
+| `Gametheory/Nash.lean` | finite games, mixed strategy profiles, expected payoff, Nash map, continuity of the Nash map, and the endpoint theorem `ExistsNashEq` |
+| `Gametheory.lean` | umbrella import file for the Lake library |
+| `benchmarks/` | BrouwerBench proof-structure QA benchmark derived from this formalization |
 
-```text
-benchmarks/data/brouwerbench_v1.jsonl
-```
+## Key Definitions and Constructions
 
-It contains 80 hand-checkable questions covering the role of named Lean objects
-in the proof pipeline. Each row includes a Lean-style context excerpt, a
-natural-language question, a reference answer, evidence anchors, and a 0-2
-manual scoring rubric.
+- `stdSimplex ℝ α`: the standard simplex over a finite type `α`.
+- `IndexedLOrder`: a family of linear orders indexed by colors.
+- `isDominant`, `isRoom`, `isDoor`, `isDoorof`: the finite room-door structure used in the Scarf parity proof.
+- `TT n l`: the finite grid of the standard simplex used in the Scarf-to-Brouwer argument.
+- `Fcolor`: the grid coloring induced by a continuous self-map of the simplex.
+- `ProductSimplices`: finite product of standard simplices.
+- `embed_from_product`, `project_to_product`: the embedding-projection pair used to reduce product Brouwer to standard-simplex Brouwer.
+- `FinGame`: finite strategic-form game data.
+- `mixedS`: type of mixed strategy profiles for a finite game.
+- `mixed_g`: expected payoff of a mixed profile.
+- `mixedNashEquilibrium`: predicate for mixed Nash equilibria.
+- `nash_map`: continuous self-map whose fixed points are mixed Nash equilibria.
 
-### Validate the Dataset
+## Benchmark Artifacts
+
+The proof-structure QA benchmark is under [`benchmarks/`](benchmarks/). It is a
+context-provided question-answering benchmark about the formal proof pipeline,
+not a Lean proof-synthesis benchmark.
+
+Each prompt includes:
+
+- a section-level Lean-style prelude from `benchmarks/context/`;
+- a task-specific excerpt from the JSONL item;
+- a natural-language question about the role of named Lean objects in the proof.
+
+To validate the benchmark files, run:
 
 ```bash
 make -C benchmarks validate
 ```
 
-### Run a Local Model
-
-The benchmark runner expects Ollama to be running locally with the requested
-model available.
+To rerun the current `qwen3:8b` evaluation, start Ollama with that model
+available and run:
 
 ```bash
-make -C benchmarks run MODEL=qwen3:8b
+make -C benchmarks qwen3
 ```
 
-After creating or updating the corresponding manual score file under
-`benchmarks/scores/`, generate a report with:
+For detailed benchmark schema, scoring, model-running commands, and reported
+v1 artifacts, see [`benchmarks/README.md`](benchmarks/README.md).
+
+## Suggested Release Workflow
+
+A typical camera-ready artifact workflow is:
 
 ```bash
-make -C benchmarks score MODEL=qwen3:8b
+# 1. Check the formalization and benchmark metadata
+lake exe cache get
+lake build
+make -C benchmarks validate
+
+# 2. Commit the finalized artifact
+git status --short
+git add .
+git commit -m "Camera-ready artifact"
+
+# 3. Record or tag the exact artifact state
+git rev-parse HEAD
+git tag camera-ready-icml2026
+git push origin main --tags
 ```
 
-See [`benchmarks/README.md`](benchmarks/README.md) for the dataset schema,
-scoring rules, reported runs, and paper-oriented artifacts.
+If the paper or README is edited after this step, repeat the build and create a
+new commit or tag. The paper should cite the final stable tag or release used for
+the submitted artifact.
 
 ## References
 
-- N. V. Ivanov, *Beyond Sperner's Lemma*.
-- J. F. Nash, *Non-Cooperative Games*, Annals of Mathematics, 1951.
-
-## License
-
-The Lean formalization under [`Brouwer/`](Brouwer) includes its own
-[`LICENSE`](Brouwer/LICENSE). Check that file before reusing or redistributing
-the formalization.
+- L. E. J. Brouwer, "Beweis der Invarianz der Dimensionenzahl", *Mathematische Annalen*, 1911.
+- N. V. Ivanov, "Beyond Sperner's Lemma", 2019.
+- J. F. Nash, "Equilibrium Points in N-Person Games", *Proceedings of the National Academy of Sciences*, 1950.
+- J. F. Nash, "Non-Cooperative Games", *Annals of Mathematics*, 1951.
+- H. E. Scarf, "The Computation of Equilibrium Prices: An Exposition", 1982.
+- The mathlib Community, "The Lean Mathematical Library", CPP 2020.
