@@ -2,6 +2,29 @@
 
 This repository contains a formalization of fundamental theorems in game theory using the Lean proof assistant. The main goal is to prove the existence of Nash Equilibria in finite games.
 
+This directory is the Lake project for the camera-ready artifact. The artifact
+uses Lean 4.22.0 as pinned by [`lean-toolchain`](lean-toolchain), with exact
+dependency revisions in [`lake-manifest.json`](lake-manifest.json). The stable
+artifact tag is `camera-ready-icml2026`. For the complete artifact layout,
+BrouwerBench paths, and release instructions, see the
+[top-level README](../README.md).
+
+## Reproducing the Lean Build
+
+From this directory, run:
+
+```bash
+lake exe cache get
+lake build
+```
+
+The umbrella library file is [`GameTheory.lean`](GameTheory.lean). From the
+repository root, validate BrouwerBench v1 with:
+
+```bash
+make -C benchmarks validate
+```
+
 ## Core Concepts and Theorems
 
 The proof of Nash's theorem relies on Brouwer's fixed-point theorem. This repository builds up the necessary mathematical framework from scratch.
@@ -30,5 +53,4 @@ The proof of Nash's theorem relies on Brouwer's fixed-point theorem. This reposi
 
 -   N. V. Ivanov, "Beyond Sperner's Lemma" (source of the Scarf → Brouwer development).
 -   J. F. Nash, "Non-Cooperative Games", Annals of Mathematics (1951).
-
 

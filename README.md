@@ -19,14 +19,20 @@ finite Scarf-style parity argument to the Brouwer and Nash endpoints.
 
 ## Paper Version
 
-The Lean version is pinned by [`lean-toolchain`](lean-toolchain), and dependency
-versions are recorded in [`lake-manifest.json`](lake-manifest.json).
+The artifact uses Lean 4.22.0, pinned by
+[`Brouwer/lean-toolchain`](Brouwer/lean-toolchain). Exact dependency revisions
+are recorded in [`Brouwer/lake-manifest.json`](Brouwer/lake-manifest.json).
 
-For the camera-ready paper, cite a stable repository state, preferably a Git tag
-or GitHub release such as:
+The camera-ready artifact is published under the stable Git tag:
 
 ```text
 camera-ready-icml2026
+```
+
+Stable artifact URL:
+
+```text
+https://github.com/Solo-ary/Game-Theory-Formalization/tree/camera-ready-icml2026
 ```
 
 To obtain the exact commit hash for a finalized artifact, run:
@@ -55,36 +61,37 @@ hard-coding a commit hash inside the README itself.
 
 ## Reproducing the Lean Build
 
-This is a Lake project. To verify the formalization, run:
+The Lake project is under `Brouwer/`. From the repository root, run:
 
 ```bash
+cd Brouwer
 lake exe cache get
 lake build
 ```
 
-The library root is [`Gametheory.lean`](Gametheory.lean), which imports the main
-development modules. Open the Lean files in an editor with the Lean language
-server running to inspect goals and proof states interactively.
+The library root is [`Brouwer/GameTheory.lean`](Brouwer/GameTheory.lean), which
+imports the main development modules. Open the Lean files in an editor with the
+Lean language server running to inspect goals and proof states interactively.
 
 ## Main Formal Statements
 
 | Statement | File | Role |
 |---|---|---|
-| `Scarf` | `Gametheory/Scarf.lean` | Scarf's combinatorial theorem: existence of a colorful room |
-| `Brouwer` | `Gametheory/Brouwer.lean` | fixed point theorem on the standard simplex |
-| `Brouwer_Product` | `Gametheory/Brouwer_product.lean` | fixed point theorem on finite products of simplices |
-| `ExistsNashEq` | `Gametheory/Nash.lean` | existence of mixed Nash equilibria in finite games |
+| `Scarf` | `Brouwer/Gametheory/Scarf.lean` | Scarf's combinatorial theorem: existence of a colorful room |
+| `Brouwer` | `Brouwer/Gametheory/Brouwer.lean` | fixed point theorem on the standard simplex |
+| `Brouwer_Product` | `Brouwer/Gametheory/Brouwer_product.lean` | fixed point theorem on finite products of simplices |
+| `ExistsNashEq` | `Brouwer/Gametheory/Nash.lean` | existence of mixed Nash equilibria in finite games |
 
 ## Repository Structure
 
 | Path | Purpose |
 |---|---|
-| `Gametheory/Simplex.lean` | supporting lemmas for standard simplices, including pure strategies and coordinate/evaluation facts |
-| `Gametheory/Scarf.lean` | Ivanov-style indexed-order Scarf theorem: indexed orders, dominant sets, cells, rooms, doors, colorful and nearly colorful configurations, and the parity endpoint `Scarf` |
-| `Gametheory/Brouwer.lean` | derivation of Brouwer's fixed point theorem on the standard simplex from Scarf's theorem using finite grids, dominance estimates, compactness, and continuity |
-| `Gametheory/Brouwer_product.lean` | product-of-simplices fixed point theorem via an explicit embedding-projection construction between a product of simplices and one larger simplex |
-| `Gametheory/Nash.lean` | finite games, mixed strategy profiles, expected payoff, Nash map, continuity of the Nash map, and the endpoint theorem `ExistsNashEq` |
-| `Gametheory.lean` | umbrella import file for the Lake library |
+| `Brouwer/Gametheory/Simplex.lean` | supporting lemmas for standard simplices, including pure strategies and coordinate/evaluation facts |
+| `Brouwer/Gametheory/Scarf.lean` | Ivanov-style indexed-order Scarf theorem: indexed orders, dominant sets, cells, rooms, doors, colorful and nearly colorful configurations, and the parity endpoint `Scarf` |
+| `Brouwer/Gametheory/Brouwer.lean` | derivation of Brouwer's fixed point theorem on the standard simplex from Scarf's theorem using finite grids, dominance estimates, compactness, and continuity |
+| `Brouwer/Gametheory/Brouwer_product.lean` | product-of-simplices fixed point theorem via an explicit embedding-projection construction between a product of simplices and one larger simplex |
+| `Brouwer/Gametheory/Nash.lean` | finite games, mixed strategy profiles, expected payoff, Nash map, continuity of the Nash map, and the endpoint theorem `ExistsNashEq` |
+| `Brouwer/GameTheory.lean` | umbrella import file for the Lake library |
 | `benchmarks/` | BrouwerBench proof-structure QA benchmark derived from this formalization |
 
 ## Key Definitions and Constructions
@@ -136,8 +143,10 @@ A typical camera-ready artifact workflow is:
 
 ```bash
 # 1. Check the formalization and benchmark metadata
+cd Brouwer
 lake exe cache get
 lake build
+cd ..
 make -C benchmarks validate
 
 # 2. Commit the finalized artifact
@@ -148,7 +157,8 @@ git commit -m "Camera-ready artifact"
 # 3. Record or tag the exact artifact state
 git rev-parse HEAD
 git tag camera-ready-icml2026
-git push origin main --tags
+git push origin submission
+git push origin camera-ready-icml2026
 ```
 
 If the paper or README is edited after this step, repeat the build and create a

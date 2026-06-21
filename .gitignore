@@ -1,0 +1,4 @@
+*.code-workspace
+.lake/
+__pycache__/
+*.py[cod]

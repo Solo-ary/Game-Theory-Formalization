@@ -16,4 +16,4 @@ lean_lib «Gametheory» {
 --require LeanCodePrompts from git "https://github.com/siddhartha-gadgil/LeanAide"@"main"
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4"
+  "https://github.com/leanprover-community/mathlib4" @ "v4.22.0"
