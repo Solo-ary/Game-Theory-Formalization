@@ -35,6 +35,26 @@ Stable artifact URL:
 https://github.com/Solo-ary/Game-Theory-Formalization/tree/camera-ready-icml2026
 ```
 
+## Quick Start (Camera-Ready Artifact)
+
+Clone the repository, check out the exact camera-ready tag, build the Lean
+development, and validate BrouwerBench from the repository root:
+
+```bash
+git clone https://github.com/Solo-ary/Game-Theory-Formalization.git
+cd Game-Theory-Formalization
+git checkout camera-ready-icml2026
+
+cd Brouwer
+lake exe cache get
+lake build
+cd ..
+make -C benchmarks validate
+```
+
+Checking out the tag places Git in detached-HEAD mode, which is expected for a
+fixed, reproducible artifact.
+
 To obtain the exact commit hash for a finalized artifact, run:
 
 ```bash
